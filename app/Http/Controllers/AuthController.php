@@ -19,16 +19,17 @@ class AuthController extends Controller
                'id_card_number' => 'required',
                'password' => 'required'
            ]);
-   
-               // if(!$validateData){
-               //     return Controller::Failed('Gagal Login');
-               // }
-           $society = society::where('id_card_number', $request->id_card_number)->where('password', $request->password)->with('regional')->first();
+           
+
+            //    if(!$validateData){
+            //        return Controller::Failed('Gagal Login');
+            //    }
+           $society = society::where('id_card_number', $request->id_card_number)->where('password', $request->password)->with(['regional'])->first();
            
            if(!$society) return Controller::Failed('Gagal Login');
    
            $token = md5($request->id_card_number);
-         $society->update(['login_tokens' => $token]);
+         $society->update(['login_tokens' => $token]);  
    
          return Controller::success('Berhasil Login', $society);
        }
@@ -36,6 +37,7 @@ class AuthController extends Controller
    
        public function logout(Request $request){
            $token =$request->query('login_tokens');
+           if(!$token) return Controller::failed('token kosong');
    
        $user =society::where('login_tokens', $token)->first();
        $user->update(['login_tokens' => null]);

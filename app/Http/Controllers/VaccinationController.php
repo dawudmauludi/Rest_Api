@@ -30,18 +30,61 @@ class VaccinationController extends Controller
      */
     public function getAllVaccine(Request $request)
     {
-        $societies =society::where('login_tokens', $request->query('login_tokens'))->first();
-        if(!$societies){
-            return Controller::failed('login user gagal');
+        $society = society::where('login_tokens', $request->query('login_tokens'))->first();
+        if (!$society) {
+            return Controller::failed('Unauthorized user', 401);
         }
 
         $first = Vaccination::query()->with('spots.regional', 'vaccines', 'vaccinator')->where([
-            'society_id'=> $societies->id,
-            'dose'=> 1
+            'society_id' => $society->id,
+            'dose' => 1
         ])->first();
 
-       
+        $second = Vaccination::query()->with('spots.regional', 'vaccines', 'vaccinator')->where([
+            'society_id' => $society->id,
+            'dose' => 2
+        ])->first();
+
+        $first_vaccine = Vaccination::where('dose', 1)->orderBy('id', 'asc')->get();
+        $second_vaccine = Vaccination::where('dose', 2)->orderBy('id', 'asc')->get();
+
+        if ($first) {
+            $first["vaccination_date"] = $first->date;
+            $first['status'] = ($first['vaccines'] && $first['vaccinator']) ? 'done' : 'registered';
+            $fqueue = $first_vaccine->search(function ($fv) use ($society) {
+                return $fv->society_id == $society->id;
+            });
+            $first['queue'] = $fqueue + 1;
+        }
+        
+        if($second) {
+            $second['vaccination_date'] = $second->date;
+            $second['status'] = ($first['vaccines'] && $second['vaccinator'] ? 'done' : 'registered');
+            $squeue = $second_vaccine->search(function ($sv) use ($society) {
+                return $sv->society_id == $society->id;
+            });
+
+            $second['queue'] = $squeue + 1;
+        }
+
+        $first = collect($first);
+        $second = collect($second);
+        $forget = ['id', 'date', "society_id", "spot_id", "vaccine_id", "doctor_id", "officer_id"];
+
+        foreach ($forget as $key => $value) {
+            $first->forget($value);
+            $second->forget($value);
+        }
+
+        return response()->json([
+            'Vaccination' => [
+                'first' => $first,
+                'second' => $second,
+            ]
+        ]);
     }
+       
+    
 
     /**
      * Show the form for creating a new resource.

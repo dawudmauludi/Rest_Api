@@ -21,7 +21,7 @@ class Vaccination extends Model
         'officer_id'
     ];
 
-    public function spot() {
+    public function spots() {
         return $this->belongsTo(Spots::class, 'spot_id');
     }
 
@@ -29,12 +29,12 @@ class Vaccination extends Model
         return $this->hasMany(society::class, 'society_id');
     }
 
-    public function vaccine() {
-        return $this->belongsTo(Vaccines::class, 'vaccine_id');
+    public function vaccines() {
+        return $this->hasOne(Vaccines::class, 'id','vaccine_id');
     }
 
-    public function doctor() {
-        return $this->belongsTo(Medical::class, 'doctor_id');
+    public function vaccinator() {
+        return $this->hasOne(Medical::class, 'id','doctor_id');
     }
     // public function officer() {
     //     return $this->belongsTo(Medical::class, 'officer_id');

@@ -28,7 +28,7 @@ class Spots extends Model
     //     return $this->hasMany(Vaccination::class, 'spot_id');
     // }
 
-    public function Vaccin(){
+    public function vaccines(){
         return $this->hasMany(SpotVaccines::class, 'spot_id');
     }
 

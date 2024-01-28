@@ -36,6 +36,7 @@ class SpotsController extends Controller
         $spots = Spots::where('regional_id', $society->regional_id)->get();
         $vaccine = Vaccines::all();
 
+
         $availableVaccine=[];
 
         foreach($spots as $spot){
@@ -59,9 +60,7 @@ class SpotsController extends Controller
     //    $spotsData2 = [];
 
     //    $vaccines =$this->vaccines->all();
-
-
-     
+                                                
     // //    $spotsData = Spots::where('regional_id', $spotsData->regional_id)->first();
    
     
@@ -130,6 +129,7 @@ class SpotsController extends Controller
 
         $data =$this->spots->findOrFail($id);
         return Controller::success('berhasil menampilkan data', $data2);
+     
 
     }
 

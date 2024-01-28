@@ -33,7 +33,7 @@ Route::group(['prefix' => 'v1'], function(){
     Route::get('/SpotVaccines', [SpotVaccinesController::class, 'SpotVaccines']);
     Route::get('/spots/{id}', [SpotsController::class, 'showSpots']);
     Route::post('/Vaccination', [VaccinationController::class, 'storeVaccination']);
-    Route::get('/Vaccination', [VaccinationController::class, 'showVaccination']);
+    Route::get('/Vaccination', [VaccinationController::class, 'getAllVaccine']);
 
 });
 
